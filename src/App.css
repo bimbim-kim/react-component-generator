@@ -665,6 +665,27 @@
   tab-size: 2;
 }
 
+/* 스트리밍 중 코드 끝에서 깜빡이는 커서 */
+.stream-caret {
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--lilac);
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.streaming-card .code-block {
+  height: 320px;
+}
+
 .code-block::selection,
 .code-block *::selection {
   background: var(--lilac);
