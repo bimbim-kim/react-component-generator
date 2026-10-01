@@ -1,0 +1,719 @@
+/* Summer cool tone on a 90s desktop.
+   Window chrome = Galmuri pixel type, content = IBM Plex Sans KR.
+   Title bar color tells you what a window is: blue input, mint settings, rose output. */
+:root {
+  --desk: #dcddee;
+  --paper: #f6f7fb;
+  --paper-sunk: #eceef6;
+  --powder: #a9c1e2;
+  --mint: #a8d5cc;
+  --rose: #e2afc3;
+  --lilac: #c3b8e0;
+  --ink: #3a3d5e;
+  --ink-soft: #62668a;
+  --shade: #9c9fc2;
+  --bevel-hi: #ffffff;
+  --bevel-lo: #a6a9c9;
+  --berry: #a83f66;
+
+  --pixel: 'Galmuri11', 'IBM Plex Sans KR', monospace;
+  --text: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', system-ui, sans-serif;
+  --code: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+:focus-visible {
+  outline: 2px dashed var(--ink);
+  outline-offset: 2px;
+}
+
+/* ---------- desktop + menu bar ---------- */
+
+.desktop {
+  min-height: 100vh;
+  padding-bottom: 48px;
+}
+
+.menubar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 32px;
+  padding: 0 20px;
+  background: var(--paper);
+  border-bottom: 2px solid var(--ink);
+  font-family: var(--pixel);
+  font-size: 12px;
+}
+
+.menubar-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+/* four-color pixel tile: the brand mark is the palette itself */
+.menubar-glyph {
+  width: 14px;
+  height: 14px;
+  background:
+    linear-gradient(var(--powder), var(--powder)) 0 0 / 7px 7px no-repeat,
+    linear-gradient(var(--mint), var(--mint)) 7px 0 / 7px 7px no-repeat,
+    linear-gradient(var(--rose), var(--rose)) 0 7px / 7px 7px no-repeat,
+    linear-gradient(var(--lilac), var(--lilac)) 7px 7px / 7px 7px no-repeat;
+  outline: 1px solid var(--ink);
+}
+
+.menubar-status {
+  display: flex;
+  gap: 20px;
+  white-space: nowrap;
+}
+
+.menubar-status div {
+  display: flex;
+  gap: 6px;
+}
+
+.menubar-status dt {
+  color: var(--ink-soft);
+}
+
+/* ---------- window chrome ---------- */
+
+.win {
+  min-width: 0;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--shade);
+  --bar: var(--powder);
+}
+
+.win--settings {
+  --bar: var(--mint);
+}
+
+.win--output {
+  --bar: var(--rose);
+}
+
+.win-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 26px;
+  padding: 0 8px;
+  border-bottom: 2px solid var(--ink);
+  /* pinstripes */
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      var(--bar) 0 2px,
+      var(--paper) 2px 4px
+    )
+    0 6px / 100% 12px no-repeat,
+    var(--paper);
+}
+
+.win-title {
+  overflow: hidden;
+  margin: 0 auto;
+  padding: 0 10px;
+  background: var(--paper);
+  font-family: var(--pixel);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 26px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.win-close {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  cursor: pointer;
+  box-shadow: 0 0 0 2px var(--paper);
+}
+
+.win-close:hover {
+  background: var(--rose);
+}
+
+.win-time {
+  flex: none;
+  padding: 0 6px;
+  background: var(--paper);
+  font-family: var(--pixel);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.win-body {
+  padding: 24px;
+}
+
+/* ---------- buttons ---------- */
+
+.btn {
+  min-height: 30px;
+  padding: 4px 14px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow:
+    inset 2px 2px 0 var(--bevel-hi),
+    inset -2px -2px 0 var(--bevel-lo);
+  font-family: var(--pixel);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--paper-sunk);
+}
+
+.btn:active:not(:disabled) {
+  background: var(--lilac);
+  box-shadow:
+    inset 2px 2px 0 var(--bevel-lo),
+    inset -2px -2px 0 var(--bevel-hi);
+}
+
+.btn:disabled {
+  color: var(--shade);
+  border-color: var(--shade);
+  cursor: not-allowed;
+}
+
+.btn-icon {
+  min-width: 30px;
+  padding: 4px 6px;
+  font-family: var(--text);
+  font-size: 15px;
+  line-height: 1;
+}
+
+/* the classic "default button" ring */
+.default-ring {
+  display: inline-flex;
+  padding: 3px;
+  border: 3px solid var(--ink);
+  border-radius: 9px;
+}
+
+.btn-generate {
+  min-height: 38px;
+  padding: 6px 22px;
+  background: var(--powder);
+  font-size: 12px;
+}
+
+.btn-generate:hover:not(:disabled) {
+  background: #9bb6dc;
+}
+
+.default-ring:has(.btn-generate:disabled) {
+  border-color: var(--shade);
+}
+
+.btn-generate:disabled {
+  background: var(--paper-sunk);
+}
+
+/* ---------- workspace ---------- */
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 28px;
+  align-items: start;
+  width: min(1240px, 100% - 40px);
+  margin: 36px auto 0;
+}
+
+/* prompt window */
+.prompt-heading {
+  margin-bottom: 16px;
+  font-family: var(--pixel);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.prompt-form {
+  display: grid;
+  gap: 14px;
+}
+
+.prompt-textarea {
+  width: 100%;
+  min-height: 112px;
+  padding: 12px 14px;
+  background: #ffffff;
+  border: 2px solid var(--ink);
+  box-shadow: inset 2px 2px 0 var(--paper-sunk);
+  font-size: 15px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.prompt-textarea::placeholder,
+.api-key-field input::placeholder {
+  color: var(--ink-soft);
+  opacity: 0.8;
+}
+
+.prompt-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.prompt-hint {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.prompt-examples {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 2px dotted var(--shade);
+}
+
+.examples-label {
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.prompt-examples ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 10px;
+  list-style: none;
+}
+
+.example-chip {
+  display: block;
+  width: 100%;
+  padding: 6px 8px;
+  background: none;
+  border: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+}
+
+.example-chip:hover {
+  background: var(--powder);
+}
+
+/* settings window */
+.settings-body {
+  display: grid;
+  gap: 20px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.field select,
+.api-key-field input {
+  width: 100%;
+  min-height: 34px;
+  padding: 4px 10px;
+  background: #ffffff;
+  border: 2px solid var(--ink);
+  font-size: 14px;
+}
+
+.field select {
+  appearance: none;
+  padding-right: 32px;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--ink) 50%) calc(100% - 15px) 50% / 6px 6px no-repeat,
+    linear-gradient(-45deg, transparent 50%, var(--ink) 50%) calc(100% - 9px) 50% / 6px 6px no-repeat,
+    #ffffff;
+  cursor: pointer;
+}
+
+.api-key-field {
+  display: flex;
+  gap: 8px;
+}
+
+.api-key-field input {
+  min-width: 0;
+}
+
+.key-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.key-lamp {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  background: var(--paper-sunk);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+}
+
+.key-status--ready {
+  color: var(--ink);
+}
+
+.key-status--ready .key-lamp {
+  background: var(--mint);
+}
+
+/* ---------- alert ---------- */
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: min(1240px, 100% - 40px);
+  margin: 28px auto 0;
+  padding: 16px 18px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  outline: 2px solid var(--paper);
+  outline-offset: -6px;
+  box-shadow: 4px 4px 0 var(--shade);
+}
+
+.alert-icon {
+  display: grid;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  background: var(--rose);
+  border: 2px solid var(--ink);
+  font-family: var(--pixel);
+  font-size: 12px;
+}
+
+.alert p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--berry);
+}
+
+/* ---------- results ---------- */
+
+.results-section {
+  width: min(1240px, 100% - 40px);
+  margin: 44px auto 0;
+}
+
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.results-header h2 {
+  font-family: var(--pixel);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.btn-clear {
+  color: var(--berry);
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+}
+
+.results-grid:empty {
+  display: none;
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  max-width: 560px;
+  padding: 8px 0;
+}
+
+/* empty folder icon in pixel outline */
+.empty-icon {
+  position: relative;
+  flex: none;
+  width: 52px;
+  height: 40px;
+  background: var(--lilac);
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--shade);
+}
+
+.empty-icon::before {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: -2px;
+  width: 22px;
+  height: 7px;
+  background: var(--lilac);
+  border: 2px solid var(--ink);
+  border-bottom: 0;
+}
+
+.empty-state p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+.empty-state strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* loading window: the one animated thing on the page */
+.loading-card {
+  max-width: 420px;
+  margin-bottom: 28px;
+}
+
+.loading-card p {
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.progress {
+  height: 16px;
+  padding: 2px;
+  border: 2px solid var(--ink);
+  background: #ffffff;
+}
+
+.progress span {
+  display: block;
+  height: 100%;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--powder) 0 6px,
+    var(--lilac) 6px 12px
+  );
+  background-size: 17px 100%;
+  animation: barber 0.8s linear infinite;
+}
+
+@keyframes barber {
+  to {
+    background-position: 17px 0;
+  }
+}
+
+/* ---------- component window ---------- */
+
+.component-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-prompt {
+  margin: 0 auto 0 0;
+  min-width: 0;
+}
+
+.card-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px 0;
+  background: var(--paper-sunk);
+  border-bottom: 2px solid var(--ink);
+}
+
+.card-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+/* folder tabs sit on the content edge */
+.tab {
+  position: relative;
+  bottom: -2px;
+  padding: 6px 16px 5px;
+  background: var(--paper-sunk);
+  border: 2px solid var(--ink);
+  border-bottom-color: var(--ink);
+  border-radius: 6px 6px 0 0;
+  font-family: var(--pixel);
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.tab--active {
+  background: #ffffff;
+  border-bottom-color: #ffffff;
+  color: var(--ink);
+}
+
+.card-actions {
+  display: flex;
+  gap: 6px;
+  padding-bottom: 8px;
+}
+
+.card-content {
+  flex: 1;
+  min-height: 320px;
+  background: #ffffff;
+}
+
+.preview-panel,
+.code-panel {
+  height: 100%;
+}
+
+.preview-content {
+  height: 100%;
+  overflow: auto;
+}
+
+.preview-render {
+  padding: 24px;
+}
+
+.preview-error {
+  margin: 16px;
+  padding: 12px 14px;
+  background: var(--paper-sunk);
+  border: 2px solid var(--berry);
+  font-family: var(--code);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--berry);
+  white-space: pre-wrap;
+}
+
+.code-panel {
+  position: relative;
+  background: var(--ink);
+}
+
+.btn-copy {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.code-block {
+  max-height: 520px;
+  overflow: auto;
+  padding: 20px 22px;
+  font-family: var(--code);
+  font-size: 13px;
+  line-height: 1.65;
+  color: #e6e8f5;
+  tab-size: 2;
+}
+
+.code-block::selection,
+.code-block *::selection {
+  background: var(--lilac);
+  color: var(--ink);
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 960px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .menubar {
+    padding: 0 16px;
+  }
+
+  .menubar-status dt {
+    display: none;
+  }
+
+  .workspace,
+  .alert,
+  .results-section {
+    width: calc(100% - 32px);
+  }
+
+  .workspace {
+    margin-top: 24px;
+  }
+
+  .win-body {
+    padding: 18px 16px;
+  }
+
+  .prompt-examples ul {
+    grid-template-columns: 1fr;
+  }
+
+  .prompt-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .default-ring,
+  .btn-generate {
+    width: 100%;
+  }
+
+  .card-toolbar {
+    flex-wrap: wrap-reverse;
+  }
+
+  .card-actions {
+    padding-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress span {
+    animation: none;
+  }
+}
