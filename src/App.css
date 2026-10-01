@@ -286,6 +286,23 @@
   color: var(--ink-soft);
 }
 
+.prompt-counter {
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.prompt-counter-over,
+.prompt-error {
+  color: #b3261e;
+  font-weight: 600;
+}
+
+.prompt-error {
+  font-size: 13px;
+  margin-right: auto;
+}
+
 .prompt-examples {
   margin-top: 24px;
   padding-top: 18px;
