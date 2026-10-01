@@ -51,6 +51,13 @@ describe('useComponentGenerator 영속성', () => {
     expect(second.result.current.promptHistory).toEqual(['B', 'A']);
   });
 
+  it('생성에 실패한 프롬프트는 히스토리에 남기지 않는다', async () => {
+    mockFetch({ error: '503' }, false);
+    const { result } = renderHook(() => useComponentGenerator());
+    await act(() => result.current.generate('A', undefined, 'google'));
+    expect(result.current.promptHistory).toEqual([]);
+  });
+
   it('같은 프롬프트는 중복 없이 맨 앞으로 올라온다', async () => {
     mockFetch({ code: 'x' });
     const { result } = renderHook(() => useComponentGenerator());

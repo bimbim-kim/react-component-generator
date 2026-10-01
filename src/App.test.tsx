@@ -12,14 +12,15 @@ describe('App 설정 영속성', () => {
     );
   });
 
-  it('입력한 API 키가 새로 마운트해도 유지된다', async () => {
+  it('입력한 API 키는 localStorage에 저장되지 않고 새로 마운트하면 비워진다', async () => {
     const user = userEvent.setup();
     const first = render(<App />);
     await user.type(screen.getByLabelText('API 키'), 'AIza-test');
+    expect(JSON.stringify({ ...localStorage })).not.toContain('AIza-test');
     first.unmount();
 
     render(<App />);
-    expect(screen.getByLabelText('API 키')).toHaveValue('AIza-test');
+    expect(screen.getByLabelText('API 키')).toHaveValue('');
   });
 
   it('선택한 공급자가 새로 마운트해도 유지된다', async () => {

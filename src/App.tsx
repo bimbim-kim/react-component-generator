@@ -13,10 +13,10 @@ const PROVIDER_CONFIG = {
 
 const parseProvider = (raw: unknown): Provider | undefined =>
   typeof raw === 'string' && raw in PROVIDER_CONFIG ? (raw as Provider) : undefined;
-const parseString = (raw: unknown) => (typeof raw === 'string' ? raw : undefined);
 
 function App() {
-  const [apiKey, setApiKey] = useLocalStorageState('rcg:apiKey', '', parseString);
+  // API 키는 보안상 localStorage에 저장하지 않고 React state에만 둔다.
+  const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
   const [provider, setProvider] = useLocalStorageState<Provider>('rcg:provider', 'google', parseProvider);
   const [envKeys, setEnvKeys] = useState<Record<Provider, boolean>>({
