@@ -2,8 +2,19 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useComponentGenerator } from './useComponentGenerator';
 
-const mockFetch = (body: unknown, ok = true) =>
-  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok, json: async () => body }));
+const ndjson = (events: object[]) =>
+  new Response(events.map((e) => `${JSON.stringify(e)}\n`).join(''), {
+    headers: { 'Content-Type': 'application/x-ndjson' },
+  });
+
+// 기존 호출부 호환: {code}면 done 이벤트 스트림, ok=false면 JSON 에러 응답
+const mockFetch = (body: { code?: string; error?: string }, ok = true) =>
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockImplementation(async () =>
+      ok ? ndjson([{ type: 'done', code: body.code }]) : Response.json(body, { status: 500 }),
+    ),
+  );
 
 describe('useComponentGenerator 영속성', () => {
   beforeEach(() => {

@@ -1,4 +1,4 @@
-import { stripCodeFences, ensureRenderCall } from './generator';
+import { parseSSE, anthropicDelta, googleDelta, createGenerateStream } from './stream';
 import { withModelFallback } from './fallback';
 
 // 우선순위 순서. 앞 모델이 실패하면 다음 모델로 폴백한다.
@@ -65,7 +65,8 @@ function resolveApiKey(provider: Provider, clientKey?: string): string | null {
   return clientKey || ENV_KEYS[provider] || null;
 }
 
-async function callAnthropic(prompt: string, apiKey: string): Promise<string> {
+// 연결 단계에서 에러를 던지고(상태 매핑 유지), 성공하면 텍스트 조각 스트림을 돌려준다.
+async function callAnthropic(prompt: string, apiKey: string): Promise<AsyncIterable<string>> {
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -76,27 +77,21 @@ async function callAnthropic(prompt: string, apiKey: string): Promise<string> {
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 4096,
+      stream: true,
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: prompt }],
     }),
   });
 
-  if (!response.ok) {
+  if (!response.ok || !response.body) {
     throw new Error(`Claude API error: ${response.status}`);
   }
 
-  const data = (await response.json()) as {
-    content: Array<{ type: string; text?: string }>;
-  };
-
-  return data.content
-    .filter((block) => block.type === 'text')
-    .map((block) => block.text)
-    .join('');
+  return textChunks(response.body, anthropicDelta);
 }
 
-async function callGoogleModel(prompt: string, apiKey: string, model: string): Promise<string> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+async function callGoogleModel(prompt: string, apiKey: string, model: string): Promise<AsyncIterable<string>> {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
 
   const response = await fetch(url, {
     method: 'POST',
@@ -108,30 +103,23 @@ async function callGoogleModel(prompt: string, apiKey: string, model: string): P
     }),
   });
 
-  if (!response.ok) {
+  if (!response.ok || !response.body) {
     throw new Error(`Gemini API error: ${response.status}`);
   }
 
-  const data = (await response.json()) as {
-    candidates: Array<{
-      content: { parts: Array<{ text?: string }> };
-      finishReason?: string;
-    }>;
-  };
-
-  const candidate = data.candidates?.[0];
-  if (candidate?.finishReason === 'MAX_TOKENS') {
-    throw new Error('생성된 코드가 너무 길어 잘렸습니다. 더 간단한 컴포넌트를 요청해주세요.');
-  }
-
-  return (
-    candidate?.content?.parts
-      ?.map((part) => part.text)
-      ?.join('') ?? ''
-  );
+  return textChunks(response.body, googleDelta);
 }
 
-async function callGoogle(prompt: string, apiKey: string): Promise<string> {
+async function* textChunks(
+  body: ReadableStream<Uint8Array>,
+  extract: (data: string) => string,
+): AsyncGenerator<string> {
+  for await (const data of parseSSE(body)) {
+    yield extract(data);
+  }
+}
+
+async function callGoogle(prompt: string, apiKey: string): Promise<AsyncIterable<string>> {
   return withModelFallback(GOOGLE_MODELS, (model) => callGoogleModel(prompt, apiKey, model));
 }
 
@@ -180,14 +168,14 @@ const server = Bun.serve({
           );
         }
 
-        const text =
+        const chunks =
           provider === 'google'
             ? await callGoogle(prompt, resolvedKey)
             : await callAnthropic(prompt, resolvedKey);
 
-        const code = ensureRenderCall(stripCodeFences(text));
-
-        return Response.json({ code }, { headers: CORS_HEADERS });
+        return new Response(createGenerateStream(chunks), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/x-ndjson; charset=utf-8' },
+        });
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error';
 
