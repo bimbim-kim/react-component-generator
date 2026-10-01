@@ -53,4 +53,17 @@ describe('PromptInput', () => {
 
     expect(onGenerate).not.toHaveBeenCalled();
   });
+
+  it('히스토리 항목을 누르면 입력창에 채워진다', async () => {
+    const user = userEvent.setup();
+    render(<PromptInput onGenerate={vi.fn()} isLoading={false} history={['이전 프롬프트']} />);
+
+    await user.click(screen.getByRole('button', { name: '이전 프롬프트' }));
+    expect(screen.getByRole('textbox')).toHaveValue('이전 프롬프트');
+  });
+
+  it('히스토리가 없으면 최근 프롬프트 영역을 보여주지 않는다', () => {
+    render(<PromptInput onGenerate={vi.fn()} isLoading={false} />);
+    expect(screen.queryByText('최근 프롬프트')).not.toBeInTheDocument();
+  });
 });

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { PromptInput } from './components/PromptInput';
 import { ComponentCard } from './components/ComponentCard';
 import { useComponentGenerator } from './hooks/useComponentGenerator';
+import { useLocalStorageState } from './hooks/useLocalStorageState';
 import type { Provider } from './types';
 import './App.css';
 
@@ -10,15 +11,19 @@ const PROVIDER_CONFIG = {
   google: { label: 'Google', placeholder: 'AIza...' },
 } as const;
 
+const parseProvider = (raw: unknown): Provider | undefined =>
+  typeof raw === 'string' && raw in PROVIDER_CONFIG ? (raw as Provider) : undefined;
+const parseString = (raw: unknown) => (typeof raw === 'string' ? raw : undefined);
+
 function App() {
-  const [apiKey, setApiKey] = useState('');
+  const [apiKey, setApiKey] = useLocalStorageState('rcg:apiKey', '', parseString);
   const [showKey, setShowKey] = useState(false);
-  const [provider, setProvider] = useState<Provider>('google');
+  const [provider, setProvider] = useLocalStorageState<Provider>('rcg:provider', 'google', parseProvider);
   const [envKeys, setEnvKeys] = useState<Record<Provider, boolean>>({
     anthropic: false,
     google: false,
   });
-  const { components, isLoading, error, generate, removeComponent, clearAll } =
+  const { components, promptHistory, isLoading, error, generate, removeComponent, clearAll } =
     useComponentGenerator();
 
   useEffect(() => {
@@ -70,7 +75,7 @@ function App() {
             <span className="win-title" id="composer-title">새 컴포넌트</span>
           </div>
           <div className="win-body">
-            <PromptInput onGenerate={handleGenerate} isLoading={isLoading} />
+            <PromptInput onGenerate={handleGenerate} isLoading={isLoading} history={promptHistory} />
           </div>
         </section>
 
